@@ -1,7 +1,8 @@
+import os
 import sys
 from GUI import MainWindow
 from BOM_Template import Template
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
 def Convert():
     FolderPath = GUI.Save_Path.text()
@@ -13,15 +14,19 @@ def Convert():
         
         Excel = Template(FilePath)
         Excel.DeleteTabs()
-        Excel.DeleteColumn()
-        Excel.AddHeader1()
+        Excel.DeleteColumns()
         Excel.Change_RowHeight()
         Excel.Change_ColumnWidth()
-        Excel.mergecells()
+        Excel.MergeCells()
 
         Excel.SaveDocument(Save_Path)
-        #GUI.ProgressBar_Progression(0,100)
-        GUI.ProgressBar.setValue(100)
+
+        GUI.ProgressBar_Progression(0,100,2000)
+
+        if GUI.CheckBox.isChecked():
+            os.system(f'start excel "{Save_Path}"')
+    else:
+        GUI.PopUp_Message("Error","All fields should be filled.",QMessageBox.Critical)
 
 if __name__ == '__main__':    
     app = QApplication(sys.argv)

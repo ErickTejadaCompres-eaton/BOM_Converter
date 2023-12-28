@@ -227,6 +227,19 @@
      </item>
     </layout>
    </widget>
+   <widget class="QCheckBox" name="CheckBox">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>390</y>
+      <width>281</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open file when the convertion is completed?</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>

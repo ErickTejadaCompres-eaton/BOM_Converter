@@ -1,8 +1,6 @@
 from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import Alignment
-from openpyxl.utils.dataframe import dataframe_to_rows
-#import pandas as pd
 
 class Template():
     def __init__(self,Path):
@@ -27,20 +25,26 @@ class Template():
         # Get the list of existing sheet names
         self.BOM_Sheet = self.Workbook['BOM']
 
-    def DeleteColumn(self):
-        # Define the columns to delete
-        columns_to_delete = ['C', 'D', 'G', 'H', 'J', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']
+    def DeleteColumns(self):
 
-        # Iterate through the columns in reverse order to avoid index issues
+        content_list = ['F / N', 'Name', 'Description', 'Quantity', 'Reference\nDesignator', 'MEP Name', 'MEP Manufacturer']
+
+        # Get the max column index
+        max_column_index = self.BOM_Sheet.max_column
+
+        # Iterate through the columns and check content in row 7
+        columns_to_delete = []
+        for i in range(1, max_column_index + 1):
+            cell_value = self.BOM_Sheet.cell(row=6, column=i).value
+            if cell_value not in content_list:
+                columns_to_delete.append(get_column_letter(i))
+
+        # Iterate through the columns to be deleted and remove them
         for column in reversed(columns_to_delete):
-            # Get the column index
             column_index = column_index_from_string(column)
-            
-            # Delete the column
             self.BOM_Sheet.delete_cols(column_index)
 
     def Change_ColumnWidth(self):
-
         # Change size of columns
         column_widths = {
             'A': 12.4,
@@ -75,7 +79,7 @@ class Template():
         for row, height in row_heights.items():
             self.BOM_Sheet.row_dimensions[row].height = height
 
-    def AddHeader1(self):
+    def AddHeader_temp(self):
         EATON_DESC = self.BOM_Sheet['A3'].value
         self.BOM_Sheet.unmerge_cells("A3:B3")
         self.BOM_Sheet.delete_rows(1,5)
@@ -120,13 +124,13 @@ class Template():
             for cell in row:
                 sheet[cell.coordinate].value = cell.value
 
-    def mergecells(self):
+    def MergeCells(self):
         # Choose the specific worksheet
         sheet = self.Workbook['BOM']  # Replace 'Sheet1' with your actual sheet name
 
         column_values = []
 
-        StartRow = 10  # Replace with the specific row number you want to start from
+        StartRow = 7  # Replace with the specific row number you want to start from
         EndRow = sheet.max_row  # Replace with the actual end row if needed
 
         for i in range(StartRow, EndRow + 1):
